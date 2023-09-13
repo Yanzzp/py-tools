@@ -30,7 +30,8 @@ class Pytools:
 
             resp = client.TextTranslate(req)
             data = json.loads(resp.to_json_string())
-            print(data)
+            if is_print:
+                print(data['TargetText'])
             return data['TargetText']  # 返回翻译结果作为字符串data
 
         except TencentCloudSDKException as err:
@@ -43,7 +44,7 @@ class Pytools:
                 print(os.path.join(path, file_name))
 
     @staticmethod
-    def delete_file(path, name):
+    def delete_file(self,path, name):
         count = 0
         for path, file_dir, files in os.walk(path):
             for file_name in files:
@@ -63,8 +64,8 @@ class Pytools:
         if count != 0:
             print("删除了" + str(count) + "个文件")
 
-    @staticmethod
-    def reverse_files_num(path):
+
+    def reverse_files_num(self,path):
         vector = []
         for path, file_dir, files in os.walk(path):
             for file_name in files:
@@ -80,3 +81,12 @@ class Pytools:
                 file_name = str(maximum + 1 - int(file_name.split(". ")[0])) + file_name[file_name.find(". "):]
                 print(f"原名：{pre_name}     新名：{file_name}")
                 os.rename(os.path.join(path, pre_name), os.path.join(path, file_name))
+    @staticmethod
+    def translate_files(path, source, target, is_print=False, is_change_name=False):
+        for root, dirs, files in os.walk(path):
+            for file_name in files:
+                # 组合完整的文件路径
+                file_path = os.path.join(root, file_name)
+                translate_text = Pytools.translate(file_name, source, target, is_print)
+                if is_change_name:
+                    os.rename(file_path, os.path.join(root, translate_text))
