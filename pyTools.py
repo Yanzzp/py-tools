@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import jieba
 
 from tencentcloud.common import credential  # 这里需要安装腾讯翻译sdk
 from tencentcloud.common.profile.client_profile import ClientProfile
@@ -92,3 +93,9 @@ class Pytools:
                 translate_text = Pytools.translate(file_name, source, target, is_print)
                 if is_change_name:
                     os.rename(file_path, os.path.join(root, translate_text))
+
+    @staticmethod
+    def divide_files_name(path):
+        jieba.enable_paddle()
+        seg_list = jieba.cut(path,use_paddle=True)
+        print("Paddle Mode: " + '/'.join(list(seg_list)))

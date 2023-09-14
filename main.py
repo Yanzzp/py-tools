@@ -1,5 +1,9 @@
 import pyTools
+import jieba
 
 Tools = pyTools.Pytools()
 
-Tools.translate("更新了腾讯api密钥的逻辑", "zh", "en", True)
+# Tools.divide_files_name("")
+
+seg_list = jieba.cut("jieba库是一款开源的中文分词工具，能够将中文文本切分成词语。",use_paddle=True)
+print("Paddle Mode: " + '/'.join(list(seg_list)))
