@@ -12,6 +12,7 @@ from tencentcloud.tmt.v20180321 import tmt_client, models
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
 
+
 class Pytools:
     @staticmethod
     def translate(text, source, target, is_print=False):
@@ -47,7 +48,7 @@ class Pytools:
                 print(os.path.join(path, file_name))
 
     @staticmethod
-    def delete_file(self,path, name):
+    def delete_file(self, path, name):
         count = 0
         for path, file_dir, files in os.walk(path):
             for file_name in files:
@@ -67,8 +68,7 @@ class Pytools:
         if count != 0:
             print("删除了" + str(count) + "个文件")
 
-
-    def reverse_files_num(self,path):
+    def reverse_files_num(self, path):
         vector = []
         for path, file_dir, files in os.walk(path):
             for file_name in files:
@@ -84,6 +84,7 @@ class Pytools:
                 file_name = str(maximum + 1 - int(file_name.split(". ")[0])) + file_name[file_name.find(". "):]
                 print(f"原名：{pre_name}     新名：{file_name}")
                 os.rename(os.path.join(path, pre_name), os.path.join(path, file_name))
+
     @staticmethod
     def translate_files(path, source, target, is_print=False, is_change_name=False):
         for root, dirs, files in os.walk(path):
@@ -96,6 +97,17 @@ class Pytools:
 
     @staticmethod
     def divide_files_name(path):
-        jieba.enable_paddle()
-        seg_list = jieba.cut(path,use_paddle=True)
-        print("Paddle Mode: " + '/'.join(list(seg_list)))
+        name_list = []
+        for path, file_dirs, files in os.walk(path):
+            # path 表示当前文件夹的路径
+            # file_dirs 表示当前文件夹中的子文件夹列表
+            # files 表示当前文件夹中的文件列表
+
+            name_list += list(jieba.cut(str(file_dirs)))
+        ignore_list = [' ', '，', '。', '、', '：', '“', '”', '？', '！', '《', '》','（', '）', '【', '】', '——', '……',
+                       '；', '‘','[',']',"'",'-', '(', ')', ',','+', '_', '.']
+        for i in ignore_list:
+            while i in name_list:
+                name_list.remove(i)
+
+        print (name_list)
