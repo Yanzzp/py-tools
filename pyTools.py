@@ -8,13 +8,15 @@ from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.tmt.v20180321 import tmt_client, models
 
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
 
 class Pytools:
     @staticmethod
     def translate(text, source, target, is_print=False):
         try:
-            cred = credential.Credential("AKIDz3yhCUbChz5xa0PcmleLr9D2f6JI5g46",
-                                         "vgHhz99wVpuyqWyDG5yf8NPODpEPN8vY")  # "xxxx"改为SecretId，"yyyyy"改为SecretKey
+            cred = credential.Credential(config['TencentApi']['username'],
+                                         config['TencentApi']['password'])  # "xxxx"改为SecretId，"yyyyy"改为SecretKey
             httpProfile = HttpProfile()
             httpProfile.endpoint = "tmt.tencentcloudapi.com"
 
