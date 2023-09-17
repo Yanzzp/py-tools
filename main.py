@@ -9,4 +9,4 @@ Tools = pyTools.Pytools()
 # print(list(seg_list))
 # print("Paddle Mode: " + '/'.join(list(seg_list)))
 
-Tools.divide_files_name("F:\未分类")
+Tools.find_divide_files_name("E:\资源","Dearie")

@@ -96,7 +96,7 @@ class Pytools:
                     os.rename(file_path, os.path.join(root, translate_text))
 
     @staticmethod
-    def divide_files_name(path):
+    def find_divide_files_name(path, name):
         name_list = []
         for path, file_dirs, files in os.walk(path):
             # path 表示当前文件夹的路径
@@ -104,10 +104,15 @@ class Pytools:
             # files 表示当前文件夹中的文件列表
 
             name_list += list(jieba.cut(str(file_dirs)))
-        ignore_list = [' ', '，', '。', '、', '：', '“', '”', '？', '！', '《', '》','（', '）', '【', '】', '——', '……',
-                       '；', '‘','[',']',"'",'-', '(', ')', ',','+', '_', '.']
+        ignore_list = [' ', '，', '。', '、', '：', '“', '”', '？', '！', '《', '》', '（', '）', '【', '】', '——', '……',
+                       '；', '‘', '[', ']', "'", '-', '(', ')', ',', '+', '_', '.']
         for i in ignore_list:
             while i in name_list:
                 name_list.remove(i)
 
-        print (name_list)
+        print(name_list)
+
+        if name in name_list:
+            print("找到名称" + name)
+        else:
+            print("没有找到")
