@@ -3,7 +3,9 @@ import os
 import shutil
 import jieba
 
-from tencentcloud.common import credential  # 这里需要安装腾讯翻译sdk
+from moviepy.editor import VideoFileClip, concatenate_videoclips
+from tencentcloud.common import credential
+
 from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
@@ -21,15 +23,13 @@ class Pytools:
                                          config['TencentApi']['password'])  # "xxxx"改为SecretId，"yyyyy"改为SecretKey
             httpProfile = HttpProfile()
             httpProfile.endpoint = "tmt.tencentcloudapi.com"
-
             clientProfile = ClientProfile()
             clientProfile.httpProfile = httpProfile
             client = tmt_client.TmtClient(cred, "ap-beijing", clientProfile)
-
             req = models.TextTranslateRequest()
             req.SourceText = text  # 要翻译的语句
             req.Source = source  # 源语言类型
-            req.Target = target  # 目标语言类型
+            req.Target = target  # 目标/语言/类型
             req.ProjectId = 0
 
             resp = client.TextTranslate(req)
@@ -73,10 +73,8 @@ class Pytools:
         for path, file_dir, files in os.walk(path):
             for file_name in files:
                 vector.append(int(file_name.split(". ")[0]))
-
         vector = sorted(vector)
         maximum = vector[-1]
-
         for path, file_dir, files in os.walk(path):
             for file_name in files:
                 # print(os.path.join(path, file_name))
@@ -116,3 +114,10 @@ class Pytools:
             print("找到名称" + name)
         else:
             print("没有找到")
+
+    @staticmethod
+    def enmerge_videos(path1, path2):
+        video1 = VideoFileClip(path1)
+        video2 = VideoFileClip(path2)
+        final_video = concatenate_videoclips([video1, video2], method="compose")
+        final_video.write_videofile('C:\\Users\\11057\\Desktop\\out.mp4', codec='libx264')
