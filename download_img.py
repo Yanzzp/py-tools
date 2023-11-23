@@ -1,11 +1,13 @@
 import platform
 import subprocess
+import threading
+
 import requests
 from bs4 import BeautifulSoup
 import os
+import sys
 
-current_directory = os.path.dirname(os.path.abspath(__file__))
-img_path = os.path.join(current_directory, '缩略图')
+
 def open_file_explorer(directory):
     os_type = platform.system()
 
@@ -21,34 +23,65 @@ def open_file_explorer(directory):
     else:
         print("Unsupported OS")
 
-def download_images(url, folder_path):
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-
-    # 发送请求获取网页内容
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    title = soup.find('span', {'id': 'thread_subject'})
+def download_image(img_url, image_filename):
     try:
-        title = title.get_text()
-    except AttributeError:
-        print('找不到标题')
-        return
+        img_data = requests.get(img_url).content
+        with open(image_filename, 'wb') as file:
+            file.write(img_data)
+            print(f'{image_filename} downloaded.')
+    except Exception as e:
+        print(f"Error downloading {img_url}: {e}")
 
-    images = soup.find_all('img', id=True)
+def download_images(url, folder_path):
+    try:
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
 
-    for i, img in enumerate(images):
-        if 'file' in img.attrs:
-            img_url = img['file']
-            if img_url.startswith(('http://', 'https://')):
-                img_data = requests.get(img_url).content
-                with open(f'{folder_path}/{title}_{i}.jpg', 'wb') as file:
-                    file.write(img_data)
-                    print(f'{title}_{i} downloaded.')
+        response = requests.get(url)
+        if response.status_code != 200:
+            print("Failed to retrieve the webpage")
+            return
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        title = soup.find('span', {'id': 'thread_subject'})
+        if not title:
+            print('找不到标题')
+            return
+
+        title_text = title.get_text().replace('/', '_').replace('\\', '_')
+        output_text = title_text.replace('【', '[').replace('】', ']').replace('（', '(').replace('）', ')')
+        images = soup.find_all('img', id=True)
+
+        threads = []
+
+        for i, img in enumerate(images):
+            img_url = img.get('file')
+            if img_url and img_url.startswith(('http://', 'https://')):
+                image_filename = os.path.join(folder_path, f'{title_text}_{i}.jpg')
+                thread = threading.Thread(target=download_image, args=(img_url, image_filename))
+                threads.append(thread)
+                thread.start()
+
+        for thread in threads:
+            thread.join()
 
 
+    except Exception as e:
+        print(f"Error in downloading images: {e}")
 
-url = 'https://www.cunhua.pics/forum.php?mod=viewthread&tid=487905&extra=page%3D1'
-download_images(url, img_path)
-open_file_explorer(img_path)
+
+mainurl = 'https://www.cunhua.pics/forum.php?mod=viewthread&tid=492854'
+
+
+def main(url):
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    img_path = os.path.join(current_directory, '缩略图')
+
+    download_images(url, img_path)
+    open_file_explorer(img_path)
+
+
+if __name__ == "__main__":
+    url = sys.argv[1] if len(sys.argv) > 1 else mainurl
+    main(url)
