@@ -89,9 +89,12 @@ class Pytools:
             for file_name in files:
                 # 组合完整的文件路径
                 file_path = os.path.join(root, file_name)
-                translate_text = Pytools.translate(file_name, source, target, is_print)
+                name = file_name.split(".")[0]
+                suffix = file_name.split(".")[-1]
+                translate_text = Pytools.translate(name, source, target, is_print)
                 if is_change_name:
-                    os.rename(file_path, os.path.join(root, translate_text))
+                    new_name = translate_text + "." + suffix
+                    os.rename(file_path, os.path.join(root, new_name))
 
     @staticmethod
     def find_divide_files_name(path, name):
