@@ -1,0 +1,12 @@
+/.idea/
+/venv/
+__pycache__/
+main.py
+
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.svg
