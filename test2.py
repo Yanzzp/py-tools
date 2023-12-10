@@ -95,7 +95,6 @@ def download_images_from_url(url):
         print(f"获取网页失败。状态码: {response.status_code}")
     return folderPath
 
-
 def create_responsive_masonry_html_for_images(directory):
     images_path = directory + '\\缩略图'
     html_content = (
@@ -117,7 +116,7 @@ def create_responsive_masonry_html_for_images(directory):
         "    margin-bottom: 10px;"
         "  }"
         # "  .gallery img {"
-        # "    width: auto;" 
+        # "    width: auto;"
         # "    height: auto;"
         # "  }"
         "</style>"
@@ -126,13 +125,12 @@ def create_responsive_masonry_html_for_images(directory):
         "<div class='gallery'>"
     )
 
-    # Iterate over files in the directory
     for filename in os.listdir(images_path):
         if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
             file_path = os.path.join(images_path, filename)
             with Image.open(file_path) as img:
                 width, height = img.size
-            img_tag = f"<div style='margin: 2px;'><img src='缩略图\\{filename}' alt='image' width='{int(width / 2)}' height='{int(height / 2)}'></div>"
+            img_tag = f"<div style='margin: 2px;'><img src='缩略图\\{filename}' alt='image' width='{int(width / 2)}' height='{int(height / 2)}' onerror='this.parentNode.style.display = \"none\"'></div>"
             html_content += img_tag
 
     html_content += "</div></body></html>"
@@ -144,7 +142,7 @@ def create_responsive_masonry_html_for_images(directory):
     return html_file_path
 
 
-url = "https://www.cunhua.pics/forum.php?mod=viewthread&tid=495148"
+url = "https://laowang.vip/forum.php?mod=viewthread&tid=798330"
 
 folderPath = download_images_from_url(url)
 open_file_explorer(folderPath)
