@@ -8,8 +8,8 @@ from scrapy import signals
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
-
-class JavspiderSpiderMiddleware:
+PROXY = 'http://127.0.0.1:7890'
+class JavScrapySpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -56,7 +56,7 @@ class JavspiderSpiderMiddleware:
         spider.logger.info("Spider opened: %s" % spider.name)
 
 
-class JavspiderDownloaderMiddleware:
+class JavScrapyDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
@@ -78,6 +78,7 @@ class JavspiderDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+        request.meta["proxy"] = PROXY
         return None
 
     def process_response(self, request, response, spider):
@@ -101,3 +102,8 @@ class JavspiderDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+class ProxyMiddleware(object):
+    def process_request(self, request, spider):
+        request.meta['proxy'] = 'http://127.0.0.1:7890'
+

@@ -1,5 +1,5 @@
-import requests
+from fake_useragent import UserAgent
 
-response = requests.get('https://javdb.com/actors/A0Qy?sort_type=0&t=74')
-
-print(response.text)
+ua = UserAgent()
+for i in range(20):
+    print(ua.random)
